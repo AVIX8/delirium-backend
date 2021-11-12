@@ -1,9 +1,8 @@
-const request = require("supertest");
-const app = require("../src/app");
+const { agent } = require("./init");
 
 describe("Test the root path", () => {
   test("It should response the GET method", done => {
-    request(app)
+    agent
       .get("/")
       .then(res => {
         expect(res.statusCode).toBe(200);
