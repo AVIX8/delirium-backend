@@ -14,17 +14,20 @@ module.exports.getSearchSuggestions = async (req, res) => {
     })
 }
 
-// const getImageUrl = (thumbnails, size = 120) => {
-//     const url = thumbnails[0].url
-//     return `${url.split('=')[0]}=w${size}-h${size}-l90-rj`
-// }
-
 module.exports.search = async (req, res) => {
     await apiInit
     api.search(req.body.text, req.body.type || 'song').then((result) => {
         res.json(result.content)
     })
 }
+
+module.exports.getSongData = async (req, res) => {
+    await apiInit
+    api.search(req.params.id, 'song').then((result) => {
+        res.json(result.content[0] || {})
+    })
+}
+
 
 function syncStdoutProgress(text, appendNewline = false) {
     process.stdout.cursorTo(0)
@@ -61,7 +64,7 @@ module.exports.download = async (req, res) => {
 
     track
         .on('progress', (chunkLength, downloaded, total) => {
-            const val = `${((downloaded / total) * 100).toFixed(2)}% `
+            const val = String(downloaded / total)
             res.write(val)
             syncStdoutProgress('Downloading:' + val)
         })
@@ -75,10 +78,28 @@ module.exports.download = async (req, res) => {
         })
 }
 
-module.exports.get = async (req, res) => {
+module.exports.stream = async (req, res) => {
     if (typeof req.params.id != 'string' || req.params.id.length > 30)
         return res.status(400)
 
     const mp4OutputPath = getPath(req.params.id)
+    if (!fs.existsSync(mp4OutputPath)) {
+        return res.status(404);
+    }
+    
     return ms.pipe(req, res, mp4OutputPath)
+}
+
+
+module.exports.getFile = async (req, res) => {
+    if (typeof req.params.id != 'string' || req.params.id.length > 30) {
+        return res.status(400)
+    }
+
+    const mp4OutputPath = getPath(req.params.id)
+    if (!fs.existsSync(mp4OutputPath)) {
+        return res.status(404);
+    }
+
+    return res.sendFile(mp4OutputPath)
 }

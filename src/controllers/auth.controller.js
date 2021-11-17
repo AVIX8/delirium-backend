@@ -10,7 +10,7 @@ const messages = require('../messages.js')
 
 const issueAccessToken = (user) =>
     jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
-        expiresIn: '12h',
+        expiresIn: '10s',
     })
 
 const issueRefreshToken = (user) =>
@@ -65,6 +65,7 @@ module.exports.login = async (req, res) => {
     const refreshToken = issueRefreshToken(user)
     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
 
+    // await Session.findOneAndDelete({user, ip}).exec()
     Session.create({ token: refreshToken, user, ip })
     return res.json({ accessToken, refreshToken })
 }
@@ -94,7 +95,7 @@ module.exports.refresh = async (req, res) => {
     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
 
     Session.create({ token: refreshToken, user: session.user, ip })
-    return res.json({ accessToken, refreshToken, deletedId: deleted?._id })
+    return res.json({ accessToken, refreshToken })
 }
 
 module.exports.logout = async (req, res) => {

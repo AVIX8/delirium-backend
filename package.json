@@ -20,6 +20,7 @@
     "jsonwebtoken": "^8.5.1",
     "mediaserver": "^0.1.1",
     "mongoose": "^6.0.12",
+    "morgan": "^1.10.0",
     "uuid": "^8.3.2",
     "youtube-music-api": "github:AVIX8/youtube-music-api",
     "ytdl-core": "^4.9.1"
