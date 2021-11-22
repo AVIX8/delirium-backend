@@ -28,17 +28,6 @@ module.exports.getSongData = async (req, res) => {
     })
 }
 
-
-function syncStdoutProgress(text, appendNewline = false) {
-    process.stdout.cursorTo(0)
-    process.stdout.clearLine(1)
-    process.stdout.write(text)
-
-    if (appendNewline) {
-        process.stdout.write('\n')
-    }
-}
-
 const outputPath = path.join(process.cwd(), 'songs')
 if (!fs.existsSync(outputPath)) {
     fs.mkdirSync(outputPath, {
@@ -66,7 +55,6 @@ module.exports.download = async (req, res) => {
         .on('progress', (chunkLength, downloaded, total) => {
             const val = String(downloaded / total)
             res.write(val)
-            syncStdoutProgress('Downloading:' + val)
         })
         .on('end', async () => {
             console.log(mp4OutputPath)
