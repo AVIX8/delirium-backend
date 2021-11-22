@@ -1,7 +1,4 @@
 var mongoose = require('mongoose')
-const dotenv = require('dotenv')
-
-dotenv.config()
 
 let connection = mongoose.createConnection()
 
