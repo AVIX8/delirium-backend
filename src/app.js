@@ -8,7 +8,7 @@ dotenv.config()
 const routes = require('./routes/index')
 
 // Middlewares
-process.env.DEVELOPMENT && app.use(morgan('dev'))
+process.env.NODE_ENV == 'development' && app.use(morgan('dev'))
 
 app.use(express.json())
 app.use(cors())
