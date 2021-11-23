@@ -37,7 +37,7 @@ if (!fs.existsSync(outputPath)) {
 
 const getPath = (id) => path.join(outputPath, `${id}.mp4`)
 
-module.exports.download = async (req, res) => {
+module.exports.prepare = async (req, res) => {
     if (typeof req.params.id != 'string' || req.params.id.length > 30)
         return res.status(400)
 
