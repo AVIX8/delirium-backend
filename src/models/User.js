@@ -10,9 +10,12 @@ const userSchema = new mongoose.Schema({
         required: true,
         max: 255,
     },
-    username: {
+    name: {
         type: String,
         max: 255,
+    },
+    likedSongs: {
+        type: [String]
     },
     date: {
         type: Date,
