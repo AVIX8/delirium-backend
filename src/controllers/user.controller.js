@@ -20,3 +20,14 @@ module.exports.unlikeSong = async (req, res) => {
     })
     return res.status(200).send()
 }
+
+module.exports.setName = async (req, res) => {
+    const { name } = req.body
+    if (typeof name !== 'string' || name.length > 30) {
+        return res.status(400).send()
+    }
+    await User.findByIdAndUpdate(req.user.id, {
+        $set: { name },
+    })
+    return res.status(200).send()
+}
