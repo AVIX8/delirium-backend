@@ -1,7 +1,6 @@
 module.exports = {
     userAlreadyExists:
-        'Пользователь с данным адресом электронной почты уже зарегистрирован',
-    badLogin: 'Пароль или адрес электронной почты неверны',
-    invalidRefreshToken: 'Не верный токен',
-    
+        'The user with this email address is already registered',
+    badLogin: 'Password or email address are incorrect',
+    invalidRefreshToken: 'Not faithful token',
 }
