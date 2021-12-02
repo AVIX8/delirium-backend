@@ -48,7 +48,7 @@ module.exports.prepare = async (req, res) => {
             return res.end()
         }
         const url = `https://www.youtube.com/watch?v=${songId}`
-        preparingSongs[songId] = ytdl(url, { filter: 'audioonly' })
+        preparingSongs[songId] = ytdl(url, { filter: 'audioonly', quality: 'highestaudio' })
         preparingSongs[songId].pipe(fs.createWriteStream(mp4OutputPath))
     }
 
@@ -63,20 +63,19 @@ module.exports.prepare = async (req, res) => {
             delete preparingSongs[songId]
         })
         .on('error', (err) => {
-            fs.unlink(mp4OutputPath, () => {
-                console.log(err)
-                res.status(400).send(err).end()
-            })
+            setTimeout(() => fs.unlinkSync(mp4OutputPath), 100);
+            console.log(err)
+            res.status(400).send(err).end()
         })
 }
 
 module.exports.stream = async (req, res) => {
     if (typeof req.params.id != 'string' || req.params.id.length > 30)
-        return res.status(400)
+        return res.status(400).send()
 
     const mp4OutputPath = getPath(req.params.id)
-    if (!fs.existsSync(mp4OutputPath)) {
-        return res.status(404)
+    if (!fs.existsSync(mp4OutputPath) || req.params.id in preparingSongs) {
+        return res.status(404).send()
     }
 
     return ms.pipe(req, res, mp4OutputPath)
@@ -84,12 +83,12 @@ module.exports.stream = async (req, res) => {
 
 module.exports.getFile = async (req, res) => {
     if (typeof req.params.id != 'string' || req.params.id.length > 30) {
-        return res.status(400)
+        return res.status(400).send()
     }
 
     const mp4OutputPath = getPath(req.params.id)
-    if (!fs.existsSync(mp4OutputPath)) {
-        return res.status(404)
+    if (!fs.existsSync(mp4OutputPath) || req.params.id in preparingSongs) {
+        return res.status(404).send()
     }
 
     return res.download(mp4OutputPath)
