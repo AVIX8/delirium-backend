@@ -43,7 +43,7 @@ describe('Auth', () => {
                     body //?
                     expect(body).toHaveProperty('message')
                     expect(body.message).toBe(
-                        'Пароль или адрес электронной почты неверны'
+                        'Password or email address are incorrect'
                     )
                 })
                 .expect(403)
@@ -57,7 +57,7 @@ describe('Auth', () => {
             )
             await agent
                 .set('Authorization', `Bearer ${accessToken}`)
-                .get('/api/auth/user')
+                .post('/api/auth/user')
                 .expect(({ body }) => {
                     body //?
                     expect(body).toHaveProperty('message')
@@ -88,7 +88,7 @@ describe('Auth', () => {
 
             await agent // accessToken expired
                 .set('Authorization', `Bearer ${accessToken}`)
-                .get('/api/auth/user')
+                .post('/api/auth/user')
                 .expect(401)
 
             let newAccessToken
@@ -105,7 +105,7 @@ describe('Auth', () => {
 
             await agent
                 .set('Authorization', `Bearer ${newAccessToken}`)
-                .get('/api/auth/user')
+                .post('/api/auth/user')
                 .expect(200)
         })
 

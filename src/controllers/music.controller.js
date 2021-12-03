@@ -38,34 +38,39 @@ if (!fs.existsSync(outputPath)) {
 const getPath = (id) => path.join(outputPath, `${id}.mp4`)
 
 const preparingSongs = {}
-module.exports.prepare = async (req, res) => {
-    const songId = req.params.id
-    if (typeof songId != 'string' || songId.length > 30) return res.status(400)
+module.exports.prepare = async (songId, send) => {
+    if (typeof songId != 'string' || songId.length > 30) {
+        send({ songId, statuse: 'end' })
+        return
+    }
 
-    const mp4OutputPath = getPath(req.params.id)
+    const mp4OutputPath = getPath(songId)
     if (!(songId in preparingSongs)) {
         if (fs.existsSync(mp4OutputPath)) {
-            return res.end()
+            send({ songId, statuse: 'end' })
+            return
         }
         const url = `https://www.youtube.com/watch?v=${songId}`
-        preparingSongs[songId] = ytdl(url, { filter: 'audioonly', quality: 'highestaudio' })
+        preparingSongs[songId] = ytdl(url, {
+            filter: 'audioonly',
+            quality: 'highestaudio',
+        })
         preparingSongs[songId].pipe(fs.createWriteStream(mp4OutputPath))
     }
 
     preparingSongs[songId]
         .on('progress', (chunkLength, downloaded, total) => {
-            const val = String(downloaded / total)
-            res.write(val)
+            send({ songId, statuse: downloaded / total })
         })
         .on('end', async () => {
             console.log(mp4OutputPath)
-            res.end()
+            send({ songId, statuse: 'end' })
             delete preparingSongs[songId]
         })
         .on('error', (err) => {
-            setTimeout(() => fs.unlinkSync(mp4OutputPath), 100);
+            setTimeout(() => fs.unlinkSync(mp4OutputPath), 100)
             console.log(err)
-            res.status(400).send(err).end()
+            send({ songId, statuse: 'end' })
         })
 }
 
