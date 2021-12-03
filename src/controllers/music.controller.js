@@ -87,7 +87,7 @@ module.exports.stream = async (req, res) => {
 }
 
 module.exports.getFile = async (req, res) => {
-    if (typeof req.params.id != 'string' || req.params.id.length > 30) {
+    if (typeof req.params.id != 'string' || req.params.id.length > 30 || typeof req.params.name != 'string') {
         return res.status(400).send()
     }
 
@@ -96,5 +96,5 @@ module.exports.getFile = async (req, res) => {
         return res.status(404).send()
     }
 
-    return res.download(mp4OutputPath)
+    return res.download(mp4OutputPath, decodeURI(req.params.name))
 }

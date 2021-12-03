@@ -15,7 +15,7 @@ router.post('/getSearchSuggestions', getSearchSuggestions)
 router.post('/search', search)
 router.get('/id/:id', getSongData)
 router.get('/stream/:id', stream)
-router.get('/file/:id', getFile)
+router.get('/file/:id/:name', getFile)
 
 router.ws('/ws', (ws) => {
     ws.onmessage = function (event) {
